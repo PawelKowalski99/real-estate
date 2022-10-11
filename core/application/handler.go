@@ -5,9 +5,9 @@ package app_todo
 import (
 	"context"
 	"database/sql"
-	"hex-arch-go/core/entities"
-	todo "hex-arch-go/core/infrastructure"
-	"hex-arch-go/internal/helpers"
+	"real-estate/core/entities"
+	todo "real-estate/core/infrastructure"
+	"real-estate/internal/helpers"
 
 	"github.com/labstack/echo/v4"
 )

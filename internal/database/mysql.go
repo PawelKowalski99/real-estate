@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"hex-arch-go/env"
+	"real-estate/env"
 
 	_ "github.com/go-sql-driver/mysql"
 )

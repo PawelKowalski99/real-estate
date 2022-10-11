@@ -1,11 +1,18 @@
-FROM golang:1.18.3-alpine3.16
+# syntax=docker/dockerfile:1
+FROM golang:alpine3.16
 
-WORKDIR /go/src/hex-arch-go
+WORKDIR /app
+
+#RUN mkdir /root/.cache/rod/browser/chromium-1033860
 
 COPY . .
 
-RUN apk add git
-RUN go get
-RUN go build -o /go/bin/hex-arch-go .
+COPY go.mod ./
 
-CMD [ "/go/bin/hex-arch-go" ]
+RUN go get
+
+RUN  CGO_ENABLED=0 GOOS=linux go build -a -o ./real-estate
+
+#COPY ./real-estate /real-estate
+
+CMD [ "./real-estate" ]

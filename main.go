@@ -1,6 +1,6 @@
 package main
 
-import "hex-arch-go/cmd"
+import "real-estate/cmd"
 
 // Call the entry point
 func main() {

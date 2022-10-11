@@ -3,11 +3,11 @@ package app_todo
 import (
 	"context"
 	"encoding/json"
-	"hex-arch-go/core/entities"
-	todo "hex-arch-go/core/infrastructure"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"real-estate/core/entities"
+	todo "real-estate/core/infrastructure"
 	"strings"
 	"testing"
 
@@ -152,7 +152,7 @@ func NewToDoHTTPServiceTest() *ToDoHTTPService {
 
 	// Create gateway
 	var gateway todo.ToDoGateway = &todo.ToDoLogic{
-		St: mock,
+		Db: mock,
 	}
 
 	// Create the Fake HTTP Service

@@ -112,7 +112,7 @@ make test
 │   ├── /application         # Handlers and the entry point of data
 │   ├── /entities            # The entities what conform the domain
 │   └── /infrastructure      # Gateways for the domain logic and Storage/Repository for the implementation of database
-├── /db                      # Simply the schema of DB for you first run
+├── /db-data                      # Simply the schema of DB for you first run
 ├── /env                     # .env loader
 ├── /internal                # Elemental logic common for all the system
 │   ├── /database            # Connection with database implemented

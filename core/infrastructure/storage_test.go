@@ -1,4 +1,4 @@
-package todo
+package estate
 
 // This is a integration test
 
@@ -6,9 +6,9 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"hex-arch-go/core/entities"
-	"hex-arch-go/env"
-	"hex-arch-go/internal/database"
+	"real-estate/core/entities"
+	"real-estate/env"
+	"real-estate/internal/database"
 	"testing"
 
 	"github.com/google/uuid"
@@ -142,7 +142,7 @@ func TestListToDoInDb(t *testing.T) {
 
 func TestNewToDoStorage(t *testing.T) {
 	as := NewToDoStorage(ctx, nil)
-	var expect ToDoStorage = &ToDoService{db: nil, ctx: ctx}
+	var expect EstateStorage = &EstateService{db: nil, ctx: ctx}
 	assert.Equal(t, as, expect)
 }
 

@@ -1,27 +1,27 @@
-package todo
+package estate
 
 import (
 	"context"
 	"database/sql"
-	"hex-arch-go/core/entities"
+	"real-estate/core/entities"
 
 	"github.com/prinick96/elog"
 )
 
 // The TODO Repository
-type ToDoStorage interface {
+type EstateStorage interface {
 	insertToDoInDb(td *entities.ToDo)
 	listToDoInDb() []entities.ToDo
 }
 
-// The TODO Service
-type ToDoService struct {
+// The Estate Service
+type EstateService struct {
 	db  *sql.DB
 	ctx context.Context
 }
 
 // Get todo lists
-func (t *ToDoService) listToDoInDb() []entities.ToDo {
+func (t *EstateService) listToDoInDb() []entities.ToDo {
 	querystring := `SELECT id, _to, _do FROM todo ORDER BY _to ASC`
 	rows, err := t.db.QueryContext(t.ctx, querystring)
 
@@ -44,13 +44,13 @@ func (t *ToDoService) listToDoInDb() []entities.ToDo {
 }
 
 // Insert a new todo
-func (t *ToDoService) insertToDoInDb(td *entities.ToDo) {
+func (t *EstateService) insertToDoInDb(td *entities.ToDo) {
 	querystring := `INSERT INTO todo (id, _to, _do) VALUES ($1, $2, $3)`
 	_, err := t.db.ExecContext(t.ctx, querystring, td.ID, td.To, td.Do)
 	go elog.New(elog.ERROR, "Error inserting a TODO element in Database", err)
 }
 
 // Constructor
-func NewToDoStorage(ctx context.Context, db *sql.DB) ToDoStorage {
-	return &ToDoService{db: db, ctx: ctx}
+func NewToDoStorage(ctx context.Context, db *sql.DB) EstateStorage {
+	return &EstateService{db: db, ctx: ctx}
 }

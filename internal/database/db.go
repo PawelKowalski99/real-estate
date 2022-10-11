@@ -14,7 +14,7 @@ type Database interface {
 // Max seconds for retry a database connection
 const DB_CONNECTION_TIMEOUT = 10
 
-// Try db connection
+// Try db-data connection
 func try(err error, db *sql.DB, counts *int) error {
 	if err != nil {
 		// increase counter

@@ -3,6 +3,8 @@ package server
 import (
 	"context"
 	"database/sql"
+	"github.com/go-redis/redis/v9"
+	"github.com/go-rod/rod"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -14,6 +16,8 @@ type EchoServer struct {
 	*echo.Echo
 	ctx  context.Context
 	db   *sql.DB
+	rdb  *redis.Client
+	crawler *rod.Browser
 	port string
 }
 
@@ -44,7 +48,7 @@ func (es *EchoServer) Run() {
 }
 
 // New Server instance
-func NewEchoServer(ctx context.Context, db *sql.DB, app_port string) Server {
+func NewEchoServer(ctx context.Context, db *sql.DB, app_port string, rdb *redis.Client, craw *rod.Browser) Server {
 	if app_port == "" {
 		app_port = "8080"
 	}
@@ -53,6 +57,8 @@ func NewEchoServer(ctx context.Context, db *sql.DB, app_port string) Server {
 		echo.New(),
 		ctx,
 		db,
+		rdb,
+		craw,
 		app_port,
 	}
 	server.configure()

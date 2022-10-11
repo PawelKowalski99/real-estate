@@ -1,7 +1,7 @@
 package helpers_test
 
 import (
-	"hex-arch-go/internal/helpers"
+	"real-estate/internal/helpers"
 	"testing"
 
 	"github.com/google/uuid"

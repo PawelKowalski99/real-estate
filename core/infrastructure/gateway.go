@@ -1,10 +1,12 @@
-package todo
+package estate
 
 import (
 	"context"
 	"database/sql"
-	"hex-arch-go/core/entities"
+	"github.com/go-redis/redis/v9"
 	"net/http"
+	"real-estate/core/application/crawler"
+	"real-estate/core/entities"
 )
 
 // the Gateway for access to Storage
@@ -15,13 +17,15 @@ type ToDoGateway interface {
 
 // The Domain Logic
 type ToDoLogic struct {
-	St ToDoStorage
+	crawler crawler.EstateCrawler
+	Db      EstateStorage
+	Rdb     redis.Client
 }
 
 // List ToDo
 func (t *ToDoLogic) ListToDo() (int, []entities.ToDo) {
 	// Domain logic
-	return http.StatusOK, t.St.listToDoInDb()
+	return http.StatusOK, t.Db.listToDoInDb()
 }
 
 // Create ToDo
@@ -37,7 +41,7 @@ func (t *ToDoLogic) CreateToDo(td *entities.ToDo) (int, entities.Response) {
 
 	// If all is ok, we can create the ToDo
 	// I can use a goroutine if the response do not need anything from the infrastructure
-	go t.St.insertToDoInDb(td)
+	go t.Db.insertToDoInDb(td)
 
 	// just make a accepted response
 	return http.StatusAccepted, entities.Response{
@@ -48,5 +52,5 @@ func (t *ToDoLogic) CreateToDo(td *entities.ToDo) (int, entities.Response) {
 
 // Constructor
 func NewToDoGateway(ctx context.Context, db *sql.DB) ToDoGateway {
-	return &ToDoLogic{NewToDoStorage(ctx, db)}
+	return &ToDoLogic{Db: NewToDoStorage(ctx, db)}
 }

@@ -1,7 +1,7 @@
-package todo
+package estate
 
 import (
-	"hex-arch-go/core/entities"
+	"real-estate/core/entities"
 )
 
 // Mocked repository
@@ -29,6 +29,6 @@ func (t *ToDoMock) listToDoInDb() []entities.ToDo {
 }
 
 // Constructor
-func NewToDoMockStorage() ToDoStorage {
+func NewToDoMockStorage() EstateStorage {
 	return &ToDoMock{}
 }

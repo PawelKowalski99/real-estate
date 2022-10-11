@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"hex-arch-go/env"
+	"real-estate/env"
 
 	_ "github.com/lib/pq"
 )
