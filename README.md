@@ -1,4 +1,4 @@
-Real estate analyzer - server
+# Real estate analyzer - server
 
 
 ⚠️ Now, the system need connect to a database, by default you can use Postgres or CockroachDB
