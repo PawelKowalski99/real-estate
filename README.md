@@ -1,33 +1,3 @@
-<p align="center">
-<img src="https://user-images.githubusercontent.com/11221009/171791133-e7da86a4-038e-4629-8c41-49ab50d6f25a.gif" />
-</p>
-
-# Clean Architecture / Hexagonal Architecture in Go
-✔️ A TODO System with hexagonal architecture / clean architecture what you can use how template for your projects
-
-✔️ Includes a simple CI.yml that you can use to get started with continuous integration in Github Actions
-
-✔️ DB and Tests Implemented with CockRoachDB but you can run with another, for example MySQL
-
-✔️ It have use cases and test examples for that use cases
-
-✔️ Unit tests models and integration test models
-
-✔️ API REST with Echo MicroFramework
-
-✔️ Simple error logs system
-
-✔️ Docker and Heroku ready
-
-<br /><br />
-
-## ✅ Install
-
-First clone the repo
-
-```bash
-git clone https://github.com/prinick96/hex-arch-go.git
-```
 
 ⚠️ Now, the system need connect to a database, by default you can use Postgres or CockroachDB
 - Just create a database
@@ -69,6 +39,10 @@ If you want run with Docker, simply
 make docker-up 
 ```
 
+or
+```
+docker compose up --build
+
 If you want run with Heroku local, simply
 ```bash
 # For Linux/MacOS
@@ -81,7 +55,7 @@ heroku-run-win
 ⚠️ If you use Windows, you need change **Procfile** in the root of project for
 ```bash
 # For windows use 
-web: bin\hex-arch-go.exe
+web: bin\real-estate.exe
 # web: bin/hex-arch-go
 ```
 And now you can run Heroku local for Windows
