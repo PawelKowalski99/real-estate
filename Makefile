@@ -1,11 +1,13 @@
 # Docker
-docker-build:
-	docker build -t hex-arch-go . 
+#docker-build:
+#	docker build .
 
-docker-up: docker-build docker-down-prod
+docker-up:
+	#docker-build docker-down-prod
 	docker-compose --env-file .env.development up  -d
 
-docker-up-prod: docker-build docker-down
+docker-up-prod:
+	#docker-build docker-down
 	docker-compose --env-file .env.production up -d
 
 docker-down:
@@ -16,10 +18,10 @@ docker-down-prod:
 
 # Compilation
 compile-win: 
-	go build -o bin/hex-arch-go.exe -v
+	go build -o bin/real-estate.exe -v
 
 compile:
-	go build -o bin/hex-arch-go -v
+	go build -o bin/real-estate -v
 	
 # Heroku
 heroku-local:

@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Build Docker image
-        run: docker build -t hex-arch-go .
+        run: docker build -t real-estate .
 
       - name: Start the Docker container
         run: docker-compose --env-file .env.production up  -d

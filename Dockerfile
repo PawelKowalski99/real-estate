@@ -11,6 +11,8 @@ COPY go.mod ./
 
 RUN go get
 
+RUN go mod tidy
+
 RUN  CGO_ENABLED=0 GOOS=linux go build -a -o ./real-estate
 
 #COPY ./real-estate /real-estate

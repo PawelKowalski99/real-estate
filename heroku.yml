@@ -3,4 +3,4 @@ build:
     - go
 
 run:
-  web: hex-arch-go
+  web: real-estate
