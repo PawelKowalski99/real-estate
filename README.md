@@ -72,11 +72,4 @@ make test
 │       └── tests            # Unit tests for helpers 
 └── /server                  # The server listener and endpoints of API REST
 ```
-
-
-## TODO:
- - Allow using by go run
- - Add usage of cache storage in GetEstates
- - Add database usage in GetEstates
- - Add query parameters to GetEstates
  
