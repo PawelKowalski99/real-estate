@@ -28,15 +28,7 @@ DB_OPTIONS = ""
 <br />
 
 ## ✅ Run
-
-If you want run in local, simply
-
-```bash
-go get
-go run main.go
-```
-
-If you want run with Docker, simply
+If you want run, simply
 ```bash
 make docker-up 
 ```
@@ -44,24 +36,8 @@ make docker-up
 or
 ```
 docker compose up --build
-
-If you want run with Heroku local, simply
-```bash
-# For Linux/MacOS
-make heroku-run
-
-# For Windows
-heroku-run-win
 ```
 
-⚠️ If you use Windows, you need change **Procfile** in the root of project for
-```bash
-# For windows use 
-web: bin\real-estate.exe
-# web: bin/hex-arch-go
-```
-And now you can run Heroku local for Windows
-<br /><br />
 
 ## ✅ Test
 For unit tests, simply
@@ -96,3 +72,11 @@ make test
 │       └── tests            # Unit tests for helpers 
 └── /server                  # The server listener and endpoints of API REST
 ```
+
+
+## TODO:
+ - Allow using by go run
+ - Add usage of cache storage in GetEstates
+ - Add database usage in GetEstates
+ - Add query parameters to GetEstates
+ 
