@@ -6,7 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"real-estate/core/entities"
-	todo "real-estate/core/infrastructure"
+	"real-estate/core/infrastructure/estate"
 	"real-estate/internal/helpers"
 
 	"github.com/labstack/echo/v4"
@@ -14,7 +14,7 @@ import (
 
 // The HTTP Handler for TODO
 type ToDoHTTPService struct {
-	gtw todo.ToDoGateway
+	gtw estate.Gateway
 }
 
 func (t *ToDoHTTPService) ListHandler(c echo.Context) error {
@@ -41,5 +41,5 @@ func (t *ToDoHTTPService) CreateHandler(c echo.Context) error {
 
 // Constructor
 func NewToDoHTTPService(ctx context.Context, db *sql.DB) *ToDoHTTPService {
-	return &ToDoHTTPService{todo.NewToDoGateway(ctx, db)}
+	return &ToDoHTTPService{estate.NewLogic(ctx, db)}
 }

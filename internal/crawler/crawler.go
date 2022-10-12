@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func NewCrawler() (browser *rod.Browser) {
+func New() (browser *rod.Browser) {
 
 	ctx := context.Background()
 	idleCounter := utils.NewIdleCounter(time.Second)

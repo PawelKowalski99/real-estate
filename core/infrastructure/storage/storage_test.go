@@ -1,4 +1,4 @@
-package estate
+package storage
 
 // This is a integration test
 
@@ -18,7 +18,7 @@ import (
 var (
 	ctx     = context.Background()
 	db      = initTestDB()
-	storage = NewToDoStorage(ctx, db)
+	storage = storage2.NewToDoStorage(ctx, db)
 )
 
 const (
@@ -58,7 +58,7 @@ func TestInsertToDoInDb(t *testing.T) {
 				Do: "DoX",
 			},
 		},
-		// More cases, it depends of your logic implemented on Storage
+		// More cases, it depends of your logic implemented on EstateStorage
 	}
 
 	for i := range testCases {
@@ -141,8 +141,8 @@ func TestListToDoInDb(t *testing.T) {
 }
 
 func TestNewToDoStorage(t *testing.T) {
-	as := NewToDoStorage(ctx, nil)
-	var expect EstateStorage = &EstateService{db: nil, ctx: ctx}
+	as := storage2.NewToDoStorage(ctx, nil)
+	var expect storage2.EstateStorage = &storage2.EstateService{db: nil, ctx: ctx}
 	assert.Equal(t, as, expect)
 }
 

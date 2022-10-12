@@ -7,7 +7,8 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"real-estate/core/entities"
-	todo "real-estate/core/infrastructure"
+	"real-estate/core/infrastructure/estate"
+	"real-estate/core/infrastructure/storage"
 	"strings"
 	"testing"
 
@@ -140,7 +141,7 @@ func TestListHandler(t *testing.T) {
 func TestNewToDoHTTPServiceTest(t *testing.T) {
 	handler := NewToDoHTTPService(ctx, nil)
 	var expect *ToDoHTTPService = &ToDoHTTPService{
-		todo.NewToDoGateway(ctx, nil),
+		estate.NewLogic(ctx, nil),
 	}
 	assert.Equal(t, handler, expect)
 }
@@ -148,11 +149,11 @@ func TestNewToDoHTTPServiceTest(t *testing.T) {
 // We need a new constructor for inject a Mock
 func NewToDoHTTPServiceTest() *ToDoHTTPService {
 	// Create storage
-	mock := todo.NewToDoMockStorage()
+	mock := storage.NewToDoMockStorage()
 
 	// Create gateway
-	var gateway todo.ToDoGateway = &todo.ToDoLogic{
-		Db: mock,
+	var gateway estate.Gateway = &estate.Logic{
+		db: mock,
 	}
 
 	// Create the Fake HTTP Service

@@ -1,4 +1,4 @@
-package estate
+package storage
 
 import (
 	"real-estate/core/entities"

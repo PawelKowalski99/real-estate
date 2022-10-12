@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/proto"
-	"net/http"
+	"github.com/labstack/gommon/log"
 	"real-estate/core/entities"
 	"strconv"
 	"time"
@@ -18,11 +18,11 @@ var (
 	expr = proto.TimeSinceEpoch(time.Now().Add(180 * 24 * time.Hour).Unix())
 )
 
-type EstateCrawler interface {
-	GetEstates(pageNum int) (int, []entities.Estate)
+type Crawler interface {
+	GetEstates(mode, city, estateType string, pageNum int) ([]entities.Estate, error)
 }
 
-type OtodomCrawler struct {
+type OtoDom struct {
 	count int
 
 	b *rod.Browser
@@ -36,11 +36,14 @@ type OtodomCrawler struct {
 	city string
 }
 
-func NewBrowser(br *rod.Browser, d, mode, city, estateType string) *OtodomCrawler {
-	return &OtodomCrawler{b: br, domain: d, mode: mode, city: city, estateType: estateType}
+func NewOtodom(br *rod.Browser) *OtoDom {
+	return &OtoDom{
+		b:          br,
+		domain:     "otodom.pl",
+	}
 }
 
-func (s *OtodomCrawler) GetEstates(pageNum int) (int, []entities.Estate){
+func (s *OtoDom) GetEstates(mode, city, estateType string, pageNum int) ([]entities.Estate, error){
 	p := s.b.MustPage(fmt.Sprintf(queryUrl, s.mode, s.estateType, s.city, strconv.Itoa(pageNum))).MustWaitLoad()
 	fmt.Println(pageNum, p.MustInfo())
 
@@ -50,11 +53,10 @@ func (s *OtodomCrawler) GetEstates(pageNum int) (int, []entities.Estate){
 	estatesElements = append(estatesElements, p.
 		MustElementsX("//*[@id=\"__next\"]/div[2]/main/div/div[2]/div[1]/div[2]/div/ul/li")...)
 
-	var estatesHref []entities.Estate
 	for _, estateEl := range estatesElements {
 		attrs := estateEl.MustElementsX("a/article/div[1]/span")
 		fmt.Println(estateEl.MustElementX("/a").MustHTML())
-		estatesHref = append(estatesHref, entities.Estate{
+		estates = append(estates, entities.Estate{
 			URL: "",
 			Address:              estateEl.MustElementX("article/p/span").MustText(),
 			Price:                attrs[0].MustText(),
@@ -69,25 +71,17 @@ func (s *OtodomCrawler) GetEstates(pageNum int) (int, []entities.Estate){
 		MustElementsX("//*[@id=\"__next\"]/div[2]/main/div/div[2]/div[1]/div[4]/div/nav/button").Last().
 		MustAttribute("disabled") == nil {
 			pageNum++
-			_, estatesHrefTemp := s.GetEstates(pageNum)
-			estatesHref = append(estatesHrefTemp, estatesHrefTemp...)
+			estatesHrefTemp, err2 := s.GetEstates(pageNum)
+			if err2 != nil {
+				log.Infof(err2.Error())
+				return nil, err2
+			}
+		estates = append(estatesHrefTemp, estatesHrefTemp...)
 	}
 
 
-	return http.StatusOK, estatesHref
+	return estates, nil
 }
-
-func (s *OtodomCrawler) GetEstatesLinks() []string {
-	return []string{}
-}
-
-
-func(s *OtodomCrawler) crawlEstate() entities.Estate {
-
-
-	return entities.Estate{}
-}
-
 
 
 

@@ -31,7 +31,7 @@ func Start() {
 		},
 	)
 
-	crawler := crawler2.NewCrawler()
+	crawler := crawler2.New()
 
 	fmt.Println(crawler.MustVersion())
 
