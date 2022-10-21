@@ -1,28 +1,19 @@
 package server
 
 import (
-	app_todo "real-estate/core/application"
+	"real-estate/core/application"
 )
 
 // a TODO Routes
-func (es *EchoServer) toDoRoutes() {
-	// call the TODO HTTP Service
-	todo := app_todo.NewToDoHTTPService(es.ctx, es.db)
+func (es *EchoServer) estatesRoutes() {
 
-	crawler := app_todo.NewCrawlerHttpService(es.ctx, es.crawler, es.rdb)
-
-	es.GET("/todo", todo.ListHandler)
-	es.POST("/todo/create", todo.CreateHandler)
+	crawler := app_estate.NewCrawlerHttpService(es.ctx, es.crawler, es.db, es.cache)
 
 	es.GET("/estate-crawler/estates", crawler.GetEstates)
 
-
 }
-
-//func anotherRoutes()...
 
 // All routes
 func (es *EchoServer) routes() {
-	es.toDoRoutes()
-	//es.anotherRoutes()
+	es.estatesRoutes()
 }

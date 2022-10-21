@@ -4,15 +4,22 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"os"
 	"real-estate/env"
 
-	_ "github.com/lib/pq"
+	//	_ "github.com/lib/pq"
+	"embed"
+
+	"github.com/pressly/goose/v3"
+
+	"github.com/jackc/pgx/v5"
 )
 
 // DB Class
 type CockRoach struct {
-	ctx    context.Context
-	config env.EnvApp
+	ctx        context.Context
+	config     env.EnvApp
+	migrations embed.FS
 }
 
 // Ping
@@ -22,7 +29,7 @@ func (c *CockRoach) ping(err error, db *sql.DB) error {
 	}
 
 	// try ping
-	err = db.PingContext(c.ctx)
+	err = db.Ping()
 	if err != nil {
 		return err
 	}
@@ -33,21 +40,39 @@ func (c *CockRoach) ping(err error, db *sql.DB) error {
 // Connect
 func (c *CockRoach) connect() (*sql.DB, error) {
 	// try open connection
-	db, err := sql.Open(
+
+	dbAddr := fmt.Sprintf(
+		"%s://%s:%s@%s:%s/%s?sslmode=disable&options=%s",
 		c.config.DB_ENGINE,
-		fmt.Sprintf(
-			"%s://%s:%s@%s:%s/%s?sslmode=verify-full&options=%s",
-			c.config.DB_ENGINE,
-			c.config.DB_USERNAME,
-			c.config.DB_PASSWORD,
-			c.config.DB_HOST,
-			c.config.DB_PORT,
-			c.config.DB_DATABASE,
-			c.config.DB_OPTIONS,
-		))
+		c.config.DB_USERNAME,
+		c.config.DB_PASSWORD,
+		c.config.DB_HOST,
+		c.config.DB_PORT,
+		c.config.DB_DATABASE,
+		c.config.DB_OPTIONS,
+	)
+
+	conn, err := pgx.Connect(context.Background(), dbAddr)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		return nil, err
+	}
+	defer conn.Close(context.Background())
+
+	db, err := sql.Open(c.config.DB_ENGINE, dbAddr)
 
 	// try ping
 	if c.ping(err, db) != nil {
+		return nil, err
+	}
+
+	goose.SetBaseFS(c.migrations)
+
+	if err := goose.SetDialect("postgres"); err != nil {
+		return nil, err
+	}
+
+	if err := goose.Up(db, "migrations/estate"); err != nil {
 		return nil, err
 	}
 
@@ -69,6 +94,6 @@ func (c *CockRoach) ConnectDB() *sql.DB {
 }
 
 // Constructor
-func NewCockRoachDatabase(ctx context.Context, ec env.EnvApp) Database {
-	return &CockRoach{ctx: ctx, config: ec}
+func NewCockRoachDatabase(ctx context.Context, ec env.EnvApp, fs embed.FS) Database {
+	return &CockRoach{ctx: ctx, config: ec, migrations: fs}
 }

@@ -2,16 +2,17 @@ package cmd
 
 import (
 	"context"
-	"fmt"
+	"embed"
 	"github.com/go-redis/redis/v9"
 	"real-estate/env"
+	"real-estate/internal/cache"
 	crawler2 "real-estate/internal/crawler"
 	"real-estate/internal/database"
 	"real-estate/server"
 )
 
 // Start the server
-func Start() {
+func Start(fs embed.FS) {
 	// App context
 	ctx := context.Background()
 
@@ -20,12 +21,12 @@ func Start() {
 
 	// Run database with env config
 	//db-data := database.NewMySQLDatabase(ctx, _env).ConnectDB() // or work with mysql
-	db := database.NewCockRoachDatabase(ctx, _env).ConnectDB()
+	db := database.NewCockRoachDatabase(ctx, _env, fs).ConnectDB()
 	defer db.Close()
 
 	rdb := redis.NewClient(
 		&redis.Options{
-			Addr:     "localhost:6379",
+			Addr:     "redis:6379",
 			Password: "", // no password set
 			DB:       0,  // use default DB
 		},
@@ -33,9 +34,7 @@ func Start() {
 
 	crawler := crawler2.New()
 
-	fmt.Println(crawler.MustVersion())
-
 	// Run server with context, database
 	//server.NewGinServer(ctx, db-data, _env.SERVER_PORT).Run() // with Gin for example
-	server.NewEchoServer(ctx, db, _env.SERVER_PORT, rdb, crawler).Run()
+	server.NewEchoServer(ctx, db, _env.SERVER_PORT, cache.New(rdb), crawler).Run()
 }

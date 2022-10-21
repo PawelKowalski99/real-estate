@@ -3,9 +3,9 @@ package server
 import (
 	"context"
 	"database/sql"
-	"github.com/go-redis/redis/v9"
 	"github.com/go-rod/rod"
 	"net/http"
+	"real-estate/internal/cache"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -14,11 +14,11 @@ import (
 // Micro framework class
 type EchoServer struct {
 	*echo.Echo
-	ctx  context.Context
-	db   *sql.DB
-	rdb  *redis.Client
+	ctx     context.Context
+	db      *sql.DB
+	cache   cache.Cache
 	crawler *rod.Browser
-	port string
+	port    string
 }
 
 // Configure echo
@@ -48,9 +48,14 @@ func (es *EchoServer) Run() {
 }
 
 // New Server instance
-func NewEchoServer(ctx context.Context, db *sql.DB, app_port string, rdb *redis.Client, craw *rod.Browser) Server {
-	if app_port == "" {
-		app_port = "8080"
+func NewEchoServer(ctx context.Context,
+	db *sql.DB,
+	appPort string,
+	rdb cache.Cache,
+	craw *rod.Browser,
+) Server {
+	if appPort == "" {
+		appPort = "8080"
 	}
 
 	server := &EchoServer{
@@ -59,7 +64,7 @@ func NewEchoServer(ctx context.Context, db *sql.DB, app_port string, rdb *redis.
 		db,
 		rdb,
 		craw,
-		app_port,
+		appPort,
 	}
 	server.configure()
 	server.routes()

@@ -1,0 +1,9 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "migrations/estate/01_estate_query.sql"
+    schema:  "migrations/estate/01_estate_schema.sql"
+    gen:
+      go:
+        package: "estate"
+        out: "core/infrastructure/storage/estate"
