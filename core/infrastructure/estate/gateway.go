@@ -2,13 +2,14 @@ package estate
 
 import (
 	"context"
-	"github.com/go-redis/redis/v9"
+	"fmt"
+	"github.com/google/uuid"
 	"net/http"
 	"real-estate/core/entities"
-	"real-estate/core/infrastructure/cache"
 	"real-estate/core/infrastructure/crawler"
-	"real-estate/core/infrastructure/storage"
-	"time"
+	//	"real-estate/core/infrastructure/storage"
+	"real-estate/core/infrastructure/storage/estate"
+	"real-estate/internal/cache"
 )
 
 // Gateway for access to EstateStorage, crawler and cache
@@ -19,8 +20,8 @@ type Gateway interface {
 // Logic Domain
 type Logic struct {
 	crawler crawler.Crawler
-	db      storage.EstateStorage
-	cache     cache.Cache
+	queries *estate.Queries
+	cache   cache.Cache
 }
 
 // GetEstates ...
@@ -29,60 +30,80 @@ func (t *Logic) GetEstates(mode, city, estateType string) ([]entities.Estate, er
 
 	// Add parser
 
-	queried := t.cache.Get(ctx,
-		time.Now().String()+
-		mode+city+estateType,
-	)
+	cacheQuery := mode + city + estateType + "1"
+
+	_, errCache := t.cache.Get(ctx, cacheQuery)
 
 	var estates []entities.Estate
 
-	switch queried {
+	switch errCache {
 
-	case redis.Nil:
+	case cache.NotExistError:
 		var err error
 		estates, err = t.crawler.GetEstates(mode, city, estateType, 1)
 		if err != nil {
 			return nil, err, http.StatusNotFound
 		}
-		_ = t.cache.Add(ctx, time.Now().String()+mode+city+estateType)
+		errCache = t.cache.Set(ctx, cacheQuery)
 
-
-		go func() {
-			goErr := func() error {
-				err = t.db.CreateEstates(estates)
-				if err != nil {
-
-					return err
-				}
-				return nil
-			}()
-			if goErr != nil {
+		for _, est := range estates {
+			_, err := t.queries.CreateEstate(ctx, estate.CreateEstateParams{
+				ID:         uuid.New(),
+				Urlstr:     est.URL,
+				Addressstr: est.Address,
+				Surface:    est.Surface,
+				RoomAmount: est.RoomAmount,
+				PricePerM2: est.PricePerM2,
+				Price:      est.Price,
+				Query:      mode + city + estateType,
+			})
+			if err != nil {
+				return nil, nil, http.StatusBadRequest
 			}
-		}()
+		}
+		if err != nil {
+			return nil, nil, http.StatusBadRequest
+		}
+		fmt.Println("Crawled estates count: ", len(estates))
 
 	case nil:
 		var err error
-		estates, err = t.db.GetEstates(mode, city, estateType)
+
+		estatesDb, err := t.queries.FindEstates(ctx, mode+city+estateType)
 		if err != nil {
 			return nil, err, http.StatusBadRequest
 		}
 
+		fmt.Println("Estates count from db: ", len(estatesDb))
+
+		for _, est := range estatesDb {
+			estates = append(estates, entities.Estate{
+				URL:        est.Urlstr,
+				Address:    est.Addressstr,
+				Surface:    est.Surface,
+				RoomAmount: est.RoomAmount,
+				PricePerM2: est.PricePerM2,
+				Price:      est.Price,
+			})
+		}
+
 	default:
-		return nil, queried, http.StatusBadRequest
+		return nil, errCache, http.StatusBadRequest
 	}
 
-	return estates, nil, 0
+	return estates, nil, http.StatusOK
 }
 
 // Constructor
-func NewLogic (
+func NewLogic(
 	crawler crawler.Crawler,
-	estateStorage storage.EstateStorage,
+	queries *estate.Queries,
 	cache cache.Cache,
+
 ) *Logic {
 	return &Logic{
-		crawler:   crawler,
-		db:        estateStorage,
-		cache:     cache,
+		crawler: crawler,
+		queries: queries,
+		cache:   cache,
 	}
 }
