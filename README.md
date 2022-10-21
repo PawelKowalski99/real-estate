@@ -73,3 +73,8 @@ make test
 └── /server                  # The server listener and endpoints of API REST
 ```
  
+
+
+ docker run --rm -v C:\Users\pawel\go\src\github.com\PawelKowalski99\real-estate\core\infrastructure\storage:/src -w /src kjconroy/sqlc generate
+
+ docker run --rm -v C:\Users\pawel\go\src\github.com\PawelKowalski99\real-estate\:/src -w /src kjconroy/sqlc generate

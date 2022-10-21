@@ -2,4 +2,4 @@
 /logs
 /.vscode
 .idea
-./db-data/
+db-data/
