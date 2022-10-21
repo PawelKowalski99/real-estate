@@ -10,30 +10,68 @@ services:
     volumes:
       - ./db-data:/data
 #    network_mode: "host"
+#   db:
+#     image: postgres
+#     restart: always
+#     user: postgres
+# #    secrets:
+# #      - db-data-password
+#     volumes:
+#       - ./db-data:/var/lib/postgresql/data
+#     environment:
+#       - POSTGRES_DB=postgres
+#       - POSTGRES_USER=postgres
+#       - POSTGRES_PASSWORD=123456
+#       - PGDATA=/var/lib/postgresql/data/some_name/
+# #      - POSTGRES_PASSWORD_FILE=/run/secrets/db-data-password
+#     ports:
+#       - '5432:5432'
+#     expose:
+#       - 5432
+#     healthcheck:
+#       test: [ "CMD", "pg_isready" ]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
   db:
-    image: postgres
+    image: postgres:latest
     restart: always
-    user: postgres
-#    secrets:
-#      - db-data-password
-    volumes:
-      - ./db-data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=real-estate
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=123456
-      - PGDATA=/var/lib/postgresql/data/some_name/
-#      - POSTGRES_PASSWORD_FILE=/run/secrets/db-data-password
     ports:
       - '5432:5432'
-    expose:
-      - 5432
-    healthcheck:
-      test: [ "CMD", "pg_isready" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-#    network_mode: "host"
+#     links:
+#       - db
+    environment:
+      POSTGRES_PASSWORD: 'postgres'
+      PGDATA: /var/lib/postgresql/data/some_name/
+      APP_DB_USER: docker
+      APP_DB_PASS: docker
+      APP_DB_NAME: docker
+      PGHOST: 'db'
+      PGDATABASE: 'postgres'
+      PGUSER: 'postgres'
+      PGPASSWORD: 'postgres'
+
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+      - ./db-data:/docker-entrypoint-initdb.d/
+
+#   postgres:
+#     image: postgres
+# #     healthcheck:
+# #       test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
+# #       timeout: 45s
+# #       interval: 10s
+# #       retries: 10
+#     restart: always
+#     environment:
+#       - POSTGRES_PASSWORD=password
+# #       - APP_DB_USER=docker
+# #       - APP_DB_PASS=docker
+# #       - APP_DB_NAME=docker
+# #     volumes:
+# #         - ./db-data:/docker-entrypoint-initdb.d/
+#     ports:
+#       - '5432:5432'
 
   redis:
     image: redislabs/redismod

@@ -1,20 +1,24 @@
 # syntax=docker/dockerfile:1
-FROM golang:alpine3.16
+# build stage
+FROM golang as builder
+
+ENV GO111MODULE=on
 
 WORKDIR /app
 
-#RUN mkdir /root/.cache/rod/browser/chromium-1033860
+COPY go.mod .
+COPY go.sum .
+
+RUN go mod download
 
 COPY . .
 
-COPY go.mod ./
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
 
-RUN go get
+# final stage
+FROM scratch
 
-RUN go mod tidy
-
-RUN  CGO_ENABLED=0 GOOS=linux go build -a -o ./real-estate
-
-#COPY ./real-estate /real-estate
-
-CMD [ "./real-estate" ]
+COPY --from=builder /app/.env.development /
+COPY --from=builder /app/real-estate /
+EXPOSE 8080
+ENTRYPOINT ["./real-estate"]
