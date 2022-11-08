@@ -17,4 +17,6 @@ type Estate struct {
 	Status string `json:"status,omitempty" json:"status,omitempty"`
 
 	Price string `json:"price,omitempty" json:"price,omitempty"`
+
+	RentPrice string `json:"rent_price,omitempty"`
 }

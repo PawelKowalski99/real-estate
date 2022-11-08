@@ -23,6 +23,7 @@ func New() (browser *rod.Browser) {
 		//     docker run -p 7317:7317 ghcr.io/go-rod/rod
 		//
 		// For more information, check the doc of launcher.Manager
+
 		var l *launcher.Launcher
 		var err error
 		for true {
@@ -30,7 +31,7 @@ func New() (browser *rod.Browser) {
 			if err == nil {
 				break
 			}
-			time.Sleep(time.Second)
+			//time.Sleep(time.Second)
 			fmt.Println("Czekam na browser", err.Error())
 		}
 
@@ -38,10 +39,15 @@ func New() (browser *rod.Browser) {
 		// Available flags: https://peter.sh/experiments/chromium-command-line-switches
 		l.Set("disable-gpu").Delete("disable-gpu")
 
+		//l.Set(flags.ProxyServer, "10.64.0.1:1080")
+
 		// Launch with headful mode
 		l.Headless(false).XVFB("--server-num=5", "--server-args=-screen 0 1600x900x16")
 
 		browser = rod.New().Client(l.MustClient()).MustConnect()
+
+		//go browser.MustHandleAuth("", "")()
+		//.DefaultDevice(devices.LaptopWithHiDPIScreen)
 
 		// You may want to start a server to watch the screenshots of the remote browser.
 		launcher.Open(browser.ServeMonitor(""))
@@ -53,8 +59,5 @@ func New() (browser *rod.Browser) {
 	}()
 	idleCounter.Wait(ctx)
 
-
 	return browser
 }
-
-

@@ -5,16 +5,22 @@
 package estate
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 )
 
 type Estate struct {
 	ID         uuid.UUID
+	IDEstate   string
 	Urlstr     string
 	Addressstr string
-	Surface    string
+	Surface    float64
 	RoomAmount string
-	PricePerM2 string
-	Price      string
+	PricePerM2 float64
+	Price      float64
 	Query      string
+	City       string
+	OfferDate  time.Time
+	RentPrice  float64
 }

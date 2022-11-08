@@ -16,8 +16,8 @@ func (e *RedisCache) Set(ctx context.Context, key string) error {
 }
 
 func (e *RedisCache) Get(ctx context.Context, url string) (val string, err error) {
-	val, errT := e.rdb.Get(ctx, url).Result()
-	if errT == redis.Nil {
+	val, err = e.rdb.Get(ctx, url).Result()
+	if err == redis.Nil {
 		err = NotExistError
 	}
 	return val, err

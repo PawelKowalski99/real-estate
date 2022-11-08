@@ -31,6 +31,26 @@ func (t *CrawlerHttpService) GetEstates(c echo.Context) (err error) {
 	return c.JSON(i, estates)
 }
 
+func (t *CrawlerHttpService) GetAveragePrice(c echo.Context) (err error) {
+
+	avg, err, status := t.gtw.GetAveragePrices(context.Background())
+	if err != nil {
+		return c.JSON(status, err)
+	}
+
+	return c.JSON(status, avg)
+}
+
+func (t *CrawlerHttpService) GetAveragePricePerM2(c echo.Context) (err error) {
+
+	avg, err, status := t.gtw.GetAveragePricesPerM2(context.Background())
+	if err != nil {
+		return c.JSON(status, err)
+	}
+
+	return c.JSON(status, avg)
+}
+
 // Constructor
 func NewCrawlerHttpService(ctx context.Context,
 	browser *rod.Browser,

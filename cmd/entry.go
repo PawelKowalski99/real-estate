@@ -33,6 +33,7 @@ func Start(fs embed.FS) {
 	)
 
 	crawler := crawler2.New()
+	defer crawler.MustClose()
 
 	// Run server with context, database
 	//server.NewGinServer(ctx, db-data, _env.SERVER_PORT).Run() // with Gin for example
